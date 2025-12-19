@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator, Awaitable, Callable
 
 from fastapi import FastAPI, Request, Response
+from fastapi.middleware.cors import CORSMiddleware  # new import
 from loguru import logger
 from pydantic.json_schema import GenerateJsonSchema
 
@@ -84,7 +85,13 @@ def create_app(settings: Settings) -> FastAPI:
         redoc_url="/redoc",
         logger=logger,
     )
-
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     app.include_router(
         check_router,
         prefix="/api",
